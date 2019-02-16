@@ -3,6 +3,7 @@
 
 import pandas as pd
 import re, string, time
+import swifter
 
 def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
 
@@ -49,12 +50,12 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   # ### Remove Diacritice
   if verbose:
     print("\tRemoving diacritice ... ")
-  df['title'] = df['title'].apply(lambda x: x.replace('â','a')).\
-    apply(lambda x: x.replace('ă','a')).apply(lambda x: x.replace('î','i')).\
-    apply(lambda x: x.replace('ș','s')).apply(lambda x: x.replace('ş','s')).\
-    apply(lambda x: x.replace('ț','t')).apply(lambda x: x.replace('ţ','t'))
+  df['title'] = df['title'].swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
+    apply(lambda x: x.replace('ă','a')).swifter.progress_bar(False).apply(lambda x: x.replace('î','i')).\
+    apply(lambda x: x.replace('ș','s')).swifter.progress_bar(False).apply(lambda x: x.replace('ş','s')).\
+    apply(lambda x: x.replace('ț','t')).swifter.progress_bar(False).apply(lambda x: x.replace('ţ','t'))
         
-  df['content'] = df['content'].apply(lambda x: x.replace('â','a')).\
+  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
     apply(lambda x: x.replace('ă','a')).\
     apply(lambda x: x.replace('î','i')).\
     apply(lambda x: x.replace('ș','s')).\
@@ -73,8 +74,8 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
       """Remove html encodings from a string. This is anything that starts with '&' and ends with ';'"""
       clean = re.compile('&.*?;')
       return re.sub(clean, ' ', text)
-  df['content'] = df['content'].apply(lambda x: remove_html_tags(x))
-  df['content'] = df['content'].apply(lambda x: remove_html_encoding(x))
+  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_html_tags(x))
+  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_html_encoding(x))
 
   # ### Remove `/n`, `/r` etc
   if verbose:
@@ -92,7 +93,7 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
       """Remove \r """
       return re.sub(re.compile('\r'), ' ', text)
 
-  df['content'] = df['content'].apply(lambda x: remove_n(x)).\
+  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_n(x)).\
     apply(lambda x: remove_t(x)).\
     apply(lambda x: remove_b(x)).\
     apply(lambda x: remove_r(x))
@@ -100,7 +101,7 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   # **Remove words of length 1 & non-alphabetical characters**
   if verbose:
     print("\tRemoving words of length 1 & non-alphabetical characters ... ")
-  df['content'] = df['content'].apply(lambda x: re.sub(r'\b\w{1}\b', '', x)).\
+  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: re.sub(r'\b\w{1}\b', '', x)).\
     apply(lambda x: re.sub(r'[^a-zA-Z]', ' ', x)).\
     apply(lambda x: ''.join(ch for ch in x if ch not in string.punctuation)).\
     apply(lambda x: ' '.join(x.split())) # removes whitespaces
@@ -110,13 +111,13 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
     print("\tRemoving data that has length < 10 characters ... ")
     print("\t\tShape before = {}".format(df.shape))  
 
-  filter_ = df['content'].apply(lambda x: len(x)) <=10
+  filter_ = df['content'].swifter.progress_bar(False).apply(lambda x: len(x)) <=10
   df = df[~filter_]
   if verbose:
     print("\t\tShape after = {}".format(df.shape))  
 
   if write:
-    filepath = save_file_path + 'data/interim/tilda_separated_filter_clean.csv'
+    filepath = save_file_path + 'data/interim/dataset_clean.csv'
     if verbose:
       print("\tWriting clean data {} ... ".format(filepath))
     df.to_csv(path_or_buf=filepath, header = True, index=False)

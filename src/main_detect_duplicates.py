@@ -10,7 +10,8 @@ import os
 # for demo purpose. 
 test_mode = False
 
-# Indicate if this is the first run. This will create: ../data/interim/tf_voc folder. 
+# Indicate if this is the first run. This will create: ../data/interim/tf_voc folder and create a db
+# in MySQL for duplicates.
 #  Change to `False` if not the first run.
 first_run = False
 sudo_password = 'pavdanawed2018'
@@ -34,6 +35,7 @@ print('\nReading ALL data from MySQL apart from new resources (latest data)... '
 # df.columns = ['id', 'title', 'type', 'content', 'datetime']
 # df = df[['id', 'title', 'type', 'content']]
 df_ref = pd.read_csv('../data/sample/tilda_separated.csv', delimiter='~')
+print("\tshape = {}".format(df_ref.shape))
 
 print("Reading new resources (latest data) from MySQL ... ")
 bashCommand = "echo " + sudo_password + "  | sudo -S mysql --user=root  < functions/make_dataset_dup_latest_data.sql"
@@ -44,6 +46,7 @@ os.system(bashCommand)
 df_latest = pd.read_csv('../data/sample/dataset_duplicates_latest.csv')
 df_latest.columns = ['id', 'title', 'type', 'content', 'datetime']
 df_latest = df_latest[['id', 'title', 'type', 'content']]
+print("\tshape = {}".format(df_latest.shape))
 
 # Cleaning the data
 df_ref = clean_data.clean_data(df_ref, verbose = True, write = False, save_file_path = "../")

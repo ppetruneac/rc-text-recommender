@@ -109,12 +109,12 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   # Removing data that has length < 10 characters.
   if verbose:
     print("\tRemoving data that has length < 10 characters ... ")
-    print("\t\tShape before = {}".format(df.shape))  
+    print("\tShape before = {}".format(df.shape))  
 
   filter_ = df['content'].swifter.progress_bar(False).apply(lambda x: len(x)) <=10
   df = df[~filter_]
   if verbose:
-    print("\t\tShape after = {}".format(df.shape))  
+    print("\tShape after = {}".format(df.shape))  
 
   if write:
     filepath = save_file_path + 'data/interim/dataset_clean.csv'
@@ -123,7 +123,7 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
     df.to_csv(path_or_buf=filepath, header = True, index=False)
 
   if verbose:
-    print("\tData Cleaning is DONE! ")
+    print("\tData Cleaning is finished! ")
 
   return df
 

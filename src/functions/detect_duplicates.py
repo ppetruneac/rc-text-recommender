@@ -45,12 +45,14 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
 # # This will remove the latest resources (id level) from the all data. 
 # df_ref = df_ref[~df_ref['id'].isin(df_latest.id)]
 
+  if verbose:
+    print('\nDetecting duplicates ... ')
   types = df_latest['type'].unique()
   n_duplicates = 3
   duplicates = []
 
   # Itenitfy duplicates for each type
-  for type_ in types:
+  for i, type_ in enumerate(types):
     # type_ = types[0]
 
     if verbose:
@@ -69,14 +71,21 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
     df_latest_type_.loc[df_latest_type_.index.values, 'language'] = np.array(language)
     language = df_latest_type_['language'].value_counts()
 
+    if verbose:
+      print("\tThere are {} languages.".format(len(language)))
+
     # Itenitfy duplicates for each language
-    for lan in language.index.values:
+    for i, lan in enumerate(language.index.values):
       # lan = language.index.values[0]
       if verbose:
         print("\t\tWorking on language: {}".format(lan))
 
       df_ref_lan = df_ref_type_[df_ref_type_['language'] == lan]
       df_latest_lan = df_latest_type_[df_latest_type_['language'] == lan]
+
+      if verbose:
+        print("\t\t\t{} new resources; {} resources as ref in MySQL..."\
+          .format(df_latest_lan.shape[0], df_ref_lan.shape[0]))
 
       # Reading the vocabulary
       name_voc = save_file_path + 'data/interim/tf_voc/tf_voc_' + str(type_) + '_' + lan + '.json'
@@ -143,12 +152,18 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
 
     if verbose:
       print("Duplicates were written to {}.".format(fname_duplicates))
-      print('DONE with detecting duplicates script!')
+      print('Finished detecting duplicates!')
 
   # df_combined[df_combined.id.isin([id, index_duplicate])]
 
   return duplicates 
 
 
+# dict_type = {'Acorduri': 1, 'Cântece': 2, 'Devoționale': 3, 'Editoriale': 4, 'Eseuri': 5, 'Maxime': 6, \
+#             'Poezii': 7, 'Schițe': 8, 'Studii': 9, 'Predici': 10, 'Cărți': 11, 'Scenete': 12, \
+#             'Powerpoint': 13, 'Reviste': 14, 'Partituri': 15, 'Biblia': 16, 'Jocuri': 37, 'Lecția zilnică': 39, \
+#             'Versete': 41, 'Biografii': 42, 'Mărturii': 43, 'Programe creștine': 45, 'Cugetări': 46, 'Dezbateri':47}
 
- 
+# type_ = 1
+# dict_type = {'1': 'Acorduri', '2': 'Cântece'}
+# dict_type[str(type_)]

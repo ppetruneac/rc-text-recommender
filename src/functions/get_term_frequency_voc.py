@@ -16,11 +16,12 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
   It will be later on used to detect duplicates and compute similar resources. 
   This code saves the tf vocabularily.
   
-  Input Arguments: 
-    df: dataframe with columns [id, title, type, content]
-    verbose: if to print progress
-    save_file_path: controls how many levels up to go to the saving directory, data; it is not a full path 
-    min_obs_lan: min obs to be considered per Type & Language. Default = 100, preferably to not change. 
+  Arguments
+  ---------
+    df : dataframe with columns [id, title, type, content]
+    verbose : if to print progress
+    save_file_path : controls how many levels up to go to the saving directory, data; it is not a full path 
+    min_obs_lan : min obs to be considered per Type & Language. Default = 100, preferably to not change. 
 
   """   
 
@@ -40,11 +41,12 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
 
   rc_type = df['type'].unique()
   # For each resource type, generate the tf and the vocabularily. 
-  for type_ in rc_type:
+  for i, type_ in enumerate(rc_type):
     df_ = df[df['type'] == type_].reset_index()
 
     if verbose:
-      print('\n\tWorking on type {} out of {} ... '.format(type_, len(rc_type)))
+      print('\n\tWorking on type {} out of {} (type {}) ... '.format(i+1, len(rc_type), type_))
+      print("\tshape = {}".format(df_.shape))
       print('\t\tDetecting the language ... ')
 
     language = df_['content'].apply(lambda x: detect(x) if x != None else np.nan)

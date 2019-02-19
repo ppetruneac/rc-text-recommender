@@ -5,7 +5,10 @@ import pandas as pd
 import re, string, time
 import swifter
 
-def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
+def clean_data(df, verbose = False, 
+  write = False, 
+  write_filename = 'dataset_clean',
+  save_file_path = "../../"):
 
   """
   Function reads data + cleans it. 
@@ -30,16 +33,16 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   if verbose:
     print("Cleaning the data ... ")
 
+  # Strip the missing values. 
+  if verbose:
+    print("\tStripping obs with missing values ... ")
+  df = df[(~df.title.isna()) & (~df.content.isna()) & (~df.type.isna())]
+
   # Lower case the text fields
   if verbose:
     print("\tLower case the text data ... ")
   df['title'] = df['title'].str.lower()
   df['content'] = df['content'].str.lower()
-
-  # Strip the missing values. 
-  if verbose:
-    print("\tStripping the missing values ... ")
-  df = df[(~df.title.isna()) & (~df.content.isna()) & (~df.type.isna())]
 
   # Remove resources of not type text
   if verbose:
@@ -50,30 +53,35 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   # ### Remove Diacritice
   if verbose:
     print("\tRemoving diacritice ... ")
-  df['title'] = df['title'].swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
-    apply(lambda x: x.replace('ă','a')).swifter.progress_bar(False).apply(lambda x: x.replace('î','i')).\
-    apply(lambda x: x.replace('ș','s')).swifter.progress_bar(False).apply(lambda x: x.replace('ş','s')).\
-    apply(lambda x: x.replace('ț','t')).swifter.progress_bar(False).apply(lambda x: x.replace('ţ','t'))
-        
-  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
-    apply(lambda x: x.replace('ă','a')).\
-    apply(lambda x: x.replace('î','i')).\
-    apply(lambda x: x.replace('ș','s')).\
-    apply(lambda x: x.replace('ş','s')).\
-    apply(lambda x: x.replace('ț','t')).\
-    apply(lambda x: x.replace('ţ','t'))
+  df['title'] = df['title'].\
+    swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ă','a')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('î','i')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ș','s')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ş','s')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ț','t')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ţ','t'))
+
+  df['content'] = df['content'].\
+    swifter.progress_bar(False).apply(lambda x: x.replace('â','a')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ă','a')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('î','i')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ș','s')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ş','s')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ț','t')).\
+    swifter.progress_bar(False).apply(lambda x: x.replace('ţ','t'))
       
   # ### Remove html tags & encoding
   if verbose:
     print("\tRemoving html tags and encoding ... ")
   def remove_html_tags(text):
-      """Remove html tags from a string. This is anything in between <>"""
-      clean = re.compile('<.*?>')
-      return re.sub(clean, ' ', text)
+    """Remove html tags from a string. This is anything in between <>"""
+    clean = re.compile('<.*?>')
+    return re.sub(clean, ' ', text)
   def remove_html_encoding(text):
-      """Remove html encodings from a string. This is anything that starts with '&' and ends with ';'"""
-      clean = re.compile('&.*?;')
-      return re.sub(clean, ' ', text)
+    """Remove html encodings from a string. This is anything that starts with '&' and ends with ';'"""
+    clean = re.compile('&.*?;')
+    return re.sub(clean, ' ', text)
   df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_html_tags(x))
   df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_html_encoding(x))
 
@@ -81,30 +89,38 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
   if verbose:
     print("\tRemoving more html characters ... ")
   def remove_n(text):
-      """Remove \n """
-      return re.sub(re.compile('\n'), ' ', text)
+    """Remove \n """
+    return re.sub(re.compile('\n'), ' ', text)
   def remove_t(text):
-      """Remove \t """
-      return re.sub(re.compile('\t'), ' ', text)
+    """Remove \t """
+    return re.sub(re.compile('\t'), ' ', text)
   def remove_b(text):
-      """Remove \b """
-      return re.sub(re.compile('\b'), ' ', text)
+    """Remove \b """
+    return re.sub(re.compile('\b'), ' ', text)
   def remove_r(text):
-      """Remove \r """
-      return re.sub(re.compile('\r'), ' ', text)
+    """Remove \r """
+    return re.sub(re.compile('\r'), ' ', text)
 
-  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: remove_n(x)).\
-    apply(lambda x: remove_t(x)).\
-    apply(lambda x: remove_b(x)).\
-    apply(lambda x: remove_r(x))
+  df['content'] = df['content'].\
+    swifter.progress_bar(False).apply(lambda x: remove_n(x)).\
+    swifter.progress_bar(False).apply(lambda x: remove_t(x)).\
+    swifter.progress_bar(False).apply(lambda x: remove_b(x)).\
+    swifter.progress_bar(False).apply(lambda x: remove_r(x))
 
   # **Remove words of length 1 & non-alphabetical characters**
   if verbose:
     print("\tRemoving words of length 1 & non-alphabetical characters ... ")
-  df['content'] = df['content'].swifter.progress_bar(False).apply(lambda x: re.sub(r'\b\w{1}\b', '', x)).\
-    apply(lambda x: re.sub(r'[^a-zA-Z]', ' ', x)).\
-    apply(lambda x: ''.join(ch for ch in x if ch not in string.punctuation)).\
-    apply(lambda x: ' '.join(x.split())) # removes whitespaces
+  df['content'] = df['content'].\
+    swifter.progress_bar(False).apply(lambda x: ''.join(ch for ch in x if ch not in string.punctuation)).\
+    swifter.progress_bar(False).apply(lambda x: ' '.join(x.split())).\
+    swifter.progress_bar(False).apply(lambda x: re.sub(r'[^a-zA-Z]', ' ', x)).\
+    swifter.progress_bar(False).apply(lambda x: re.sub(r'\b\w{1}\b', '', x))
+
+  df['title'] = df['title'].\
+    swifter.progress_bar(False).apply(lambda x: ''.join(ch for ch in x if ch not in string.punctuation)).\
+    swifter.progress_bar(False).apply(lambda x: ' '.join(x.split())).\
+    swifter.progress_bar(False).apply(lambda x: re.sub(r'[^a-zA-Z]', ' ', x)).\
+    swifter.progress_bar(False).apply(lambda x: re.sub(r'\b\w{1}\b', '', x))
 
   # Removing data that has length < 10 characters.
   if verbose:
@@ -117,7 +133,7 @@ def clean_data(df, verbose = False, write = False, save_file_path = "../../"):
     print("\tShape after = {}".format(df.shape))  
 
   if write:
-    filepath = save_file_path + 'data/interim/dataset_clean.csv'
+    filepath = save_file_path + 'data/interim/' + write_filename + '.csv'
     if verbose:
       print("\tWriting clean data {} ... ".format(filepath))
     df.to_csv(path_or_buf=filepath, header = True, index=False)

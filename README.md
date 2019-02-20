@@ -1,7 +1,7 @@
  # rc-text-recommender 
   ============================== 
 
- This project idenitfies textual duplicates and recommends similar resources. 
+ This project identifies textual duplicates and recommends similar resources. 
  
  ### Identifying Duplicates
  Similar resources are identified based on [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity). The most similar resource is returned and loaded into MySQL. 

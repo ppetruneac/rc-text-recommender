@@ -3,20 +3,34 @@
 
  This project idenitfies textual duplicates and recommends similar resources. 
  
- ## Duplicates
- Similar resources are identified based on cosine similarity. 
+ ### Identifying Duplicates
+ Similar resources are identified based on cosine similarity. The most similar resource is returned. 
  
- > Assumtion: 
- Raw data read from source (i.e. MySQL) has language as attribute / column. If note, please use [detect_language.py](https://github.com/ppetruneac/rc-text-recommender/blob/master/src/functions/detect_language.py) in *src/functions* to detect the language, then upload the data back to MySQL. 
+ > Assumption: 
+ Raw data read from source (i.e. MySQL) has language as attribute / column. If not, please use [detect_language.py](https://github.com/ppetruneac/rc-text-recommender/blob/master/src/functions/detect_language.py) in *src/functions* to detect the language, then upload the data back to MySQL. 
+ 
+ > Note: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. It is recommended for these to be deleted first from the database. 
+ 
+ **Setup**
+ - install [Python](www.python.org) and ideally use a virtual environment. 
+ - `pip install -r requirements.txt` to install Python package requirements.
+ 
+ **src/functions**: change the *.sql files to accomodate the current database and tables. Do not change the relative file paths. 
+ - `create_mysql_db_test_mode.sql`: creates a database for test purpose & creates a database and table for duplicates
+ - `make_dataset_duplicates.sql`: change to read from actual database and table
+ - `load_duplicates_to_MySQL.sql`: change to load into the actual database and table
+ 
+ **main_detect_duplicates.py** 
+ - main function to run on terminal. Change the *bashCommand* to be able to execute.
 
  
- ## Recommending similar resources 
+ ### Recommending similar resources 
  > Nothing on this at the moment.
 
 
 
   
-  Project Organization
+  ### Project Organization
   ------------
 
     ├── README.md          <- The top-level README for developers using this project.
@@ -38,10 +52,8 @@
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
     │
-    ├── environment.yml    <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `conda env export > environment.yml`
-    │
-    ├── dockerfile         <- File to automate building a Docker container off the code in src, dependencies, and notebooks
+    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+    │                         generated with `pip freeze > requirements.txt`
     │
     ├── src                <- Source code for use in this project.
        ├── main.xyz        <- Main code to run. 
@@ -53,6 +65,6 @@
           └── train.xyz
           └── visualize.xyz
 
-    <p><small>Project structure inspired by [cookiecutter](https://cookiecutter.readthedocs.io/en/latest/).</small></p>
+   Project structure inspired by [cookiecutter](https://cookiecutter.readthedocs.io/en/latest/).
   
   

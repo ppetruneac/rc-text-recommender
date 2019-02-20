@@ -1,7 +1,17 @@
  # rc-text-recommender 
   ============================== 
 
-  This is the default repo description.
+ This project idenitfies textual duplicates and recommends similar resources. 
+ 
+ ## Duplicates
+ Similar resources are identified based on cosine similarity. 
+ 
+ > Assumtion: 
+ Raw data read from source (i.e. MySQL) has language as attribute / column. If note, please use [detect_language.py](https://github.com/ppetruneac/rc-text-recommender/blob/master/src/functions/detect_language.py) in *src/functions* to detect the language, then upload the data back to MySQL. 
+
+ 
+ ## Recommending similar resources 
+ > Nothing on this at the moment.
 
 
 

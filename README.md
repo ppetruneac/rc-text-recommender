@@ -16,7 +16,7 @@
  - `pip install -r requirements.txt` to install Python package requirements.
  
  **src/functions**: change the *.sql files to accomodate the current database and tables. Do not change the relative file paths. 
- - `create_mysql_db_test_mode.sql`: creates a database for test purpose & creates a database and table for duplicates
+ - `create_mysql_db_test_mode.sql`: creates main database for test purpose &  a database for loading duplicates
  - `make_dataset_duplicates.sql`: change to read from actual database and table
  - `load_duplicates_to_MySQL.sql`: change to load into the actual database and table
  

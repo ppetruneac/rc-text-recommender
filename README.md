@@ -6,10 +6,10 @@
  ### Identifying Duplicates
  Similar resources are identified based on [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity). The most similar resource is returned and loaded into MySQL. 
  
- > Assumption: 
+ > **Assumption**: 
  Raw data read from source (i.e. MySQL) has language as attribute / column. If not, please use [detect_language.py](https://github.com/ppetruneac/rc-text-recommender/blob/master/src/functions/detect_language.py) in *src/functions* to detect the language, then upload the data back to MySQL. 
  
- > Note: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. It is recommended for these to be deleted first from the database. 
+ > **Note**: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. It is recommended for these to be deleted first from the database. 
  
  **Setup**
  - install [Python](www.python.org) and ideally use a virtual environment. 

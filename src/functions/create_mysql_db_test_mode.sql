@@ -31,7 +31,7 @@ CREATE TABLE duplicates (id INT NOT NULL,
   id_dup INT NOT NULL, 
   title VARCHAR(500) NOT NULL, 
   title_dup VARCHAR(500) NOT NULL, 
-  cos_similarity NUMERIC NOT NULL,
+  cos_similarity FLOAT NOT NULL,
   type INT NOT NULL,
   PRIMARY KEY (id));
 

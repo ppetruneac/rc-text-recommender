@@ -21,7 +21,7 @@
  - `load_duplicates_to_MySQL.sql`: change to load into the actual database and table
  
  **main_detect_duplicates.py** 
- - main function to run on terminal. Change the *bashCommand* to be able to execute.
+ - main function to run on terminal. Change the *bashCommand* to be able to execute for your user account.
  
  **How to run**
  ```

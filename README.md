@@ -4,7 +4,7 @@
  This project idenitfies textual duplicates and recommends similar resources. 
  
  ### Identifying Duplicates
- Similar resources are identified based on cosine similarity. The most similar resource is returned and loaded into MySQL. 
+ Similar resources are identified based on [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity). The most similar resource is returned and loaded into MySQL. 
  
  > Assumption: 
  Raw data read from source (i.e. MySQL) has language as attribute / column. If not, please use [detect_language.py](https://github.com/ppetruneac/rc-text-recommender/blob/master/src/functions/detect_language.py) in *src/functions* to detect the language, then upload the data back to MySQL. 

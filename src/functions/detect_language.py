@@ -20,7 +20,7 @@ def detect_language(df, verbose = False):
 
     if type(df) == pd.core.series.Series:    
       language = df.swifter.progress_bar(verbose).apply(lambda x: detect(x) if x != None else np.nan)
-    else
+    else:
       try:
         df = pd.Series(df)
         language = df.swifter.progress_bar(verbose).apply(lambda x: detect(x) if x != None else np.nan)

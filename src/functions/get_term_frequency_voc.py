@@ -25,6 +25,17 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
 
   """   
 
+  # Creating the language dictioanry using the language_id.
+  # Language 'Romani (tiganeasca)' cannot be found in langdetect. 
+  dict_lan = {'1': 'ro',
+              '2': 'en',
+              '3': 'fr',
+              '4': 'it',
+              '5': 'es',
+              '6': 'de',
+              '7': 'hu',
+              '8': 'ru'}
+
   if verbose:
     print('\nGenerating the term frequency vocabulary ... ')
 
@@ -36,93 +47,53 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
   else:
     os.makedirs(model_output_path)
 
-  # if verbose:
-  #   print('\tDetecting the language for all data (it can take a while) ... ')
-
-  rc_type = df['type'].unique()
+  rc_type = df['res_type_id'].unique()
   # For each resource type, generate the tf and the vocabularily. 
   for i, type_ in enumerate(rc_type):
-    df_ = df[df['type'] == type_].reset_index()
+    df_ = df[df['res_type_id'] == type_].reset_index()
 
     if verbose:
       print('\n\tWorking on type {} out of {} (type {}) ... '.format(i+1, len(rc_type), type_))
       print("\tshape = {}".format(df_.shape))
-      print('\t\tDetecting the language ... ')
 
-    language = df_['content'].apply(lambda x: detect(x) if x != None else np.nan)
-    df_.loc[df_.index, 'language'] = np.array(language)
-    language = df_['language'].value_counts()
-
+    language = df['language_id'].unique()
     if verbose:
-      print("\t\tThere are {} languages for type {}. Only languages with > {} obs will be considered.".\
-        format(len(language), type_, min_obs_lan))
+      print("\tThere are {} languages for type {}. ".format(len(language), type_))
 
-    if len(language) == 1: 
-      documents = df_['content']
+    for j, lan in enumerate(language):
+      # This if statement is to limited wrongly detected languages. 
+      if (lan >= min_obs_lan):
 
-      # Tries to get stopwords if found; if not will not remove them. 
-      try: 
-          cv = CountVectorizer(min_df=5, stop_words = get_stop_words(language.index.item()), max_features=10000)
-      except:
-          cv = CountVectorizer(min_df=5, max_features=10000) 
-          
-      tf_features = cv.fit_transform(documents).toarray()
-      # tf_features = pd.DataFrame(tf_features, index=documents.index)
+        df_lang = df_[df_['language_id'] == lan]
+        if verbose:
+          print('\tWorking on language {} ... '.format(dict_lan[str(lan)]))
 
-      vocabulary = cv.vocabulary_
+        # This will be run once to create the tf-idf matrix and similarity df
+        documents = df_lang['content']
+        # Tries to get stopwords if found; if not will not remove them. 
+        try: 
+            cv = CountVectorizer(min_df=5, stop_words = get_stop_words(dict_lan[str(lan)]), max_features=10000)
+        except:
+            cv = CountVectorizer(min_df=5, max_features=10000) 
 
-      # Saving the vocabulary to file
-      if verbose:
-        print('\tWriting vocabulary to disk ...')
-              
-      for v in vocabulary:
-          vocabulary[v] = vocabulary[v].item()
-      json_data = json.dumps(vocabulary)
-      voc_name = save_file_path + "data/interim/tf_voc/tf_voc_" + str(type_) + "_" + language.index.item() + '.json'
-      f = open(voc_name,"w")
-      f.write(json_data)
-      f.close()
+        tf_features = cv.fit_transform(documents).toarray()
+        # tf_features = pd.DataFrame(tf_features, index=documents.index)
 
-      if verbose:
-        print('\t\tVocabulary was written to: {}'.format(voc_name))
+        vocabulary = cv.vocabulary_
+        if verbose:
+          print('\t\tWriting vocabulary to disk ...')
+      
+        # Saving the vocabulary to file
+        for v in vocabulary:
+            vocabulary[v] = vocabulary[v].item()
+        json_data = json.dumps(vocabulary)
+        voc_name = save_file_path + "data/interim/tf_voc/tf_voc_"  + str(type_) + "_" + dict_lan[str(lan)] + '.json'
+        f = open(voc_name,"w")
+        f.write(json_data)
+        f.close()
 
-    # If there are more languages, write tf for each languages with more than 100 items.
-    else:
-      lang_index = language.index
-      for i, lan in enumerate(language):
-        # This if statement is to limited wrongly detected languages. 
-        if (lan >= min_obs_lan):
-          df_lang = df_[df_['language'] == lang_index[i]]  
-          if verbose:
-            print('\t\tWorking on language {} ... '.format(lang_index[i].upper()))
-
-          # This will be run once to create the tf-idf matrix and similarity df
-          documents = df_lang['content']
-
-          # Tries to get stopwords if found; if not will not remove them. 
-          try: 
-              cv = CountVectorizer(min_df=5, stop_words = get_stop_words(language.index.item()), max_features=10000)
-          except:
-              cv = CountVectorizer(min_df=5, max_features=10000) 
-
-          tf_features = cv.fit_transform(documents).toarray()
-          # tf_features = pd.DataFrame(tf_features, index=documents.index)
-
-          vocabulary = cv.vocabulary_
-          if verbose:
-            print('\t\t\tWriting vocabulary to disk ...')
-        
-          # Saving the vocabulary to file
-          for v in vocabulary:
-              vocabulary[v] = vocabulary[v].item()
-          json_data = json.dumps(vocabulary)
-          voc_name = save_file_path + "data/interim/tf_voc/tf_voc_"  + str(type_) + "_" + lang_index[i] + '.json'
-          f = open(voc_name,"w")
-          f.write(json_data)
-          f.close()
-
-          if verbose:
-            print('\t\t\tVocabulary was written to: {}'.format(voc_name))
+        if verbose:
+          print('\t\tVocabulary was written to: {}'.format(voc_name))
 
   if verbose:
     print("\nVocabulary for {} resources was written to {}. ".\

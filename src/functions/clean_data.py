@@ -6,9 +6,9 @@ import re, string, time
 import swifter
 
 def clean_data(df, verbose = False, 
-  write = False, 
-  write_filename = 'dataset_clean',
-  save_file_path = "../../"):
+                  write = False, 
+                  write_filename = 'dataset_clean',
+                  save_file_path = "../../"):
 
   """
   Function reads data + cleans it. 
@@ -21,7 +21,7 @@ def clean_data(df, verbose = False,
   - saves the clean data
   
   Input Arguments: 
-    df: dataframe with columns [id, title, type, content]
+    df: dataframe with columns [id, title, res_type_id, content]
     verbose: if to print progress
     write =  boolean, whether to save the file to data folder or not.
     save_file_path: controls how many levels up to go to the saving directory, data; it is not a full path 
@@ -36,7 +36,7 @@ def clean_data(df, verbose = False,
   # Strip the missing values. 
   if verbose:
     print("\tStripping obs with missing values ... ")
-  df = df[(~df.title.isna()) & (~df.content.isna()) & (~df.type.isna())]
+  df = df[(~df['title'].isna()) & (~df['content'].isna()) & (~df['res_type_id'].isna())]
 
   # Lower case the text fields
   if verbose:
@@ -48,7 +48,7 @@ def clean_data(df, verbose = False,
   if verbose:
     print("\tRemove resource type of not type `text` ... ")
   resource_type2remove = [15,17,18,20,22,30,31,29,40,48,35,12]
-  df = df.loc[~df.type.isin(resource_type2remove)]
+  df = df.loc[~df['res_type_id'].isin(resource_type2remove)]
   
   # ### Remove Diacritice
   if verbose:

@@ -6,23 +6,10 @@ from functions import get_term_frequency_voc
 from functions import detect_duplicates
 import os
 
- 
-test_mode = True
-# test_mode (boolean); if set to True, will:
-#   1. create database in MySQL with sample data (table) 
-#   2. Create duplicates db with empty table.
-
 first_run = True
 # first_run : boolean. If True it will create data/interim/tf_voc folder
 
 sudo_password = 'sudo_password'
-
-if test_mode:
-  # Create a db with sample data.  
-  print('\nCreating a sample db (resurse_crestine) in MySQL --> TEST_MODE ... ')
-  bashCommand = "echo " + sudo_password + "  | sudo mysql --user=root  < functions/create_mysql_db_test_mode.sql"
-  os.system(bashCommand) 
-
 
 print('\nReading data from MySQL ... ')
 # ===============CHANGE__THIS__SQL__FILE: make_dataset_duplicates.sql ===============
@@ -37,19 +24,16 @@ os.system(bashCommand)
 
 # Importing data in Python env
 df_ref = pd.read_csv('../data/sample/dataset_duplicates_all.csv')
-df_ref.columns = ['id', 'title', 'type', 'content', 'language']
+df_ref.columns = ['id', 'res_type_id', 'language_id', 'title', 'created_at', 'content']
 print("\tshape df_ref = {}".format(df_ref.shape))
 
 df_latest = pd.read_csv('../data/sample/dataset_duplicates_latest.csv')
-df_latest.columns = ['id', 'title', 'type', 'content', 'language']
+df_latest.columns = ['id', 'res_type_id', 'language_id', 'title', 'created_at', 'content']
 print("\tshape df_latest = {}".format(df_latest.shape))
-
-df_ref = df_ref[~df_ref['id'].isin(df_latest['id'])]
 
 # Cleaning the data
 df_ref = clean_data.clean_data(df_ref, verbose = True, write = False, save_file_path = "../")
 df_latest = clean_data.clean_data(df_latest, verbose = True, write = False, save_file_path = "../")
-
 
 # Creating the tf vocabularily and save it to data/interim/tf
 if first_run:

@@ -48,12 +48,12 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
     if 'vocabulary' in locals():
       del vocabulary
 
-    type_ = resource['type']
+    type_ = resource['res_type_id']
     text = resource['content']
-    lan = detect(text)
+    lan = resource['language_id']
 
-    # Filter or type and language
-    df_ref_lan = df_ref[(df_ref['language'] == lan) & (df_ref['type'] == type_)]
+    # Filter df_ref on type and language
+    df_ref_lan = df_ref[(df_ref['language_id'] == lan) & (df_ref['res_type_id'] == type_)]
     id_df_ref_lan = np.array(df_ref_lan['id'])
     name_voc = save_file_path + 'data/interim/tf_voc/tf_voc_' + str(type_) + '_' + lan + '.json'
 
@@ -69,8 +69,9 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
         print("")
 
     # Combine the text + ref resources
-    documents = pd.concat([pd.Series(text), df_ref_lan['content']])  
+    documents = pd.concat([df_ref_lan['content'], pd.Series(text)]) 
 
+    # If vocabularily is found in /tf_voc/
     if 'vocabulary' in locals():
       # Compute term frequencies 
       cv = CountVectorizer(vocabulary=vocabulary)
@@ -91,7 +92,7 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
       cos_similarity = similarity_mat[similarity_max_index] 
 
       duplicates.append( {'id': id_current, 'id_dup': id_duplicate, 
-                          'type': resource['type'],
+                          'type': resource['res_type_id'],
                           'cos_similarity': cos_similarity,
                         'title': resource['title'],
                         'title_dup': df_ref_lan[df_ref_lan['id'] == id_duplicate]['title'].item()})

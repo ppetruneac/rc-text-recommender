@@ -35,7 +35,7 @@ def read_data(host, user, password, db):
     resources
   LEFT JOIN text_details ON resources.id = text_details.resources_id
   WHERE
-    text_details.content is not null and resources.created_at < (NOW() - INTERVAL 600 HOUR)
+    text_details.content is not null and resources.created_at < (NOW() - INTERVAL 24 HOUR)
   """
   df_ref = pd.read_sql(query_ref, connection)
 
@@ -51,7 +51,7 @@ def read_data(host, user, password, db):
     resources
   LEFT JOIN text_details ON resources.id = text_details.resources_id
   WHERE
-    text_details.content is not null and resources.created_at > (NOW() - INTERVAL 600 HOUR) -- resources not in the last 24h.  
+    text_details.content is not null and resources.created_at > (NOW() - INTERVAL 24 HOUR) -- resources not in the last 24h.  
     """
 
   df_latest = pd.read_sql(query_latest, connection)

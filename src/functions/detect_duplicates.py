@@ -1,5 +1,5 @@
 
-import json, swifter, warnings
+import json, warnings
 import numpy as np
 import pandas as pd
 
@@ -42,6 +42,17 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
     print('\nDetecting duplicates for {} resources ... '.format(df_latest.shape[0]))
   duplicates = []
 
+  dict_lan = {'1': 'ro',
+              '2': 'en',
+              '3': 'fr',
+              '4': 'it',
+              '5': 'es',
+              '6': 'de',
+              '7': 'hu',
+              '8': 'ru',
+              '9':'unknown1', 
+              '10': 'unknown2'}
+
 
   for j, resource in tqdm(df_latest.iterrows()):
 
@@ -55,7 +66,7 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
     # Filter df_ref on type and language
     df_ref_lan = df_ref[(df_ref['language_id'] == lan) & (df_ref['res_type_id'] == type_)]
     id_df_ref_lan = np.array(df_ref_lan['id'])
-    name_voc = save_file_path + 'data/interim/tf_voc/tf_voc_' + str(type_) + '_' + lan + '.json'
+    name_voc = save_file_path + 'data/interim/tf_voc/tf_voc_' + str(type_) + '_' + dict_lan[str(lan)] + '.json'
 
     # Loading the vocabulary from file, if found
     try:
@@ -71,7 +82,7 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
     # Combine the text + ref resources
     documents = pd.concat([df_ref_lan['content'], pd.Series(text)]) 
 
-    # If vocabularily is found in /tf_voc/
+    # If vocabularily is found in /tf_voc/, detect duplicates
     if 'vocabulary' in locals():
       # Compute term frequencies 
       cv = CountVectorizer(vocabulary=vocabulary)
@@ -107,3 +118,6 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
       print('Duplicates were written to {}.'.format(fname))
 
   return duplicates
+
+if __name__ == "__main__":
+    pass  

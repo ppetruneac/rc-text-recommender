@@ -36,7 +36,6 @@ def read_data(host, user, password, db):
   LEFT JOIN text_details ON resources.id = text_details.resources_id
   WHERE
     text_details.content is not null and resources.created_at < (NOW() - INTERVAL 600 HOUR)
-  LIMIT  3  
   """
   df_ref = pd.read_sql(query_ref, connection)
 
@@ -61,5 +60,5 @@ def read_data(host, user, password, db):
 
   return df_ref, df_latest
 
-if if __name__ == "__main__":
+if __name__ == "__main__":
     pass  

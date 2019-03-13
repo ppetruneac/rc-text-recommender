@@ -4,31 +4,16 @@ import pandas as pd
 from functions import clean_data
 from functions import get_term_frequency_voc
 from functions import detect_duplicates
+from functions import make_dataset_duplicates
 import os
 
 first_run = True
 # first_run : boolean. If True it will create data/interim/tf_voc folder
 
-sudo_password = 'sudo_password'
-
-print('\nReading data from MySQL ... ')
-# ===============CHANGE__THIS__SQL__FILE: make_dataset_duplicates.sql ===============
-bashCommand = "echo " + sudo_password + "  | sudo mysql --user=root  < functions/make_dataset_duplicates.sql"
-os.system(bashCommand)
-
-# Move the files from /tmp folder
-bashCommand = "echo " + sudo_password + "| sudo mv /tmp/dataset_duplicates_all.csv ../data/sample/"
-os.system(bashCommand)
-bashCommand = "echo " + sudo_password + "| sudo mv /tmp/dataset_duplicates_latest.csv ../data/sample/"
-os.system(bashCommand)
-
-# Importing data in Python env
-df_ref = pd.read_csv('../data/sample/dataset_duplicates_all.csv')
-df_ref.columns = ['id', 'res_type_id', 'language_id', 'title', 'created_at', 'content']
+# Reading data
+print("\nReading the data ... ")
+df_ref, df_latest = make_dataset_duplicates.read_data(host='localhost', user='root', password='password', db='resursenew')
 print("\tshape df_ref = {}".format(df_ref.shape))
-
-df_latest = pd.read_csv('../data/sample/dataset_duplicates_latest.csv')
-df_latest.columns = ['id', 'res_type_id', 'language_id', 'title', 'created_at', 'content']
 print("\tshape df_latest = {}".format(df_latest.shape))
 
 # Cleaning the data
@@ -45,6 +30,6 @@ duplicates = detect_duplicates.detect_duplicates(df_ref, df_latest, verbose=True
 
 # Load new duplicates to MySQL
 print('Loading the latest duplicates to MySQL ...')
-bashCommand = "echo " + sudo_password + "  | sudo mysql --user=root  < functions/load_duplicates_to_MySQL.sql"
+bashCommand = "sudo mysql --user=root  < functions/load_duplicates_to_MySQL.sql"
 os.system(bashCommand)
 print('DONE! ')

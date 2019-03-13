@@ -34,7 +34,9 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
               '5': 'es',
               '6': 'de',
               '7': 'hu',
-              '8': 'ru'}
+              '8': 'ru',
+              '9':'unknown1', 
+              '10': 'unknown2'}
 
   if verbose:
     print('\nGenerating the term frequency vocabulary ... ')
@@ -48,6 +50,7 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
     os.makedirs(model_output_path)
 
   rc_type = df['res_type_id'].unique()
+
   # For each resource type, generate the tf and the vocabularily. 
   for i, type_ in enumerate(rc_type):
     df_ = df[df['res_type_id'] == type_].reset_index()
@@ -57,16 +60,17 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
       print("\tshape = {}".format(df_.shape))
 
     language = df['language_id'].unique()
+  
     if verbose:
       print("\tThere are {} languages for type {}. ".format(len(language), type_))
-
+    
+    # For each language
     for j, lan in enumerate(language):
-      # This if statement is to limited wrongly detected languages. 
-      if (lan >= min_obs_lan):
-
-        df_lang = df_[df_['language_id'] == lan]
+      df_lang = df_[df_['language_id'] == lan]
+      
+      if (df_lang.shape[0] >= min_obs_lan):        
         if verbose:
-          print('\tWorking on language {} ... '.format(dict_lan[str(lan)]))
+          print('\t\tWorking on language {} ... '.format(dict_lan[str(lan)]))
 
         # This will be run once to create the tf-idf matrix and similarity df
         documents = df_lang['content']
@@ -94,8 +98,13 @@ def get_term_frequency_voc(df, verbose = False, save_file_path = "../../", min_o
 
         if verbose:
           print('\t\tVocabulary was written to: {}'.format(voc_name))
-
+      # else:
+      #   if verbose:
+      #     print('\t\tThere are not enough resources to compute voc for language {}.'.format(lan))
+  
   if verbose:
     print("\nVocabulary for {} resources was written to {}. ".\
       format(len(rc_type), save_file_path + "data/interim/tf_voc/"))
   
+if __name__ == "__main__":
+    pass

@@ -12,7 +12,7 @@
  - Duplicates are identified based on the vocabularily of the same resource type and language. 
 
  
- > **Note**: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. It is recommended for these to be deleted first from the database. 
+ > **Note**: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. This needs to be uploaded into a database/table (*duplicates.all_duplicates*)
  
  **Setup**
  - install [Python](www.python.org) and ideally use a virtual environment. 

@@ -5,12 +5,16 @@ import pandas as pd
 
 from langdetect import detect
 from tqdm import tqdm
+from difflib import SequenceMatcher
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import MaxAbsScaler, Normalizer
 from sklearn.pipeline import make_pipeline
 
 warnings.simplefilter("ignore")
+
+def similar_strings(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_path = "../../"):
@@ -102,14 +106,35 @@ def detect_duplicates(df_ref, df_latest, verbose=True, write = True, save_file_p
       id_duplicate = int(id_df_ref_lan[similarity_max_index])
       cos_similarity = similarity_mat[similarity_max_index] 
 
-      duplicates.append( {'id': id_current, 'id_dup': id_duplicate, 
+      duplicates.append({'id': id_current, 'id_dup': id_duplicate, 
                           'type': resource['res_type_id'],
+                          'lan' : lan, 
                           'cos_similarity': cos_similarity,
-                        'title': resource['title'],
-                        'title_dup': df_ref_lan[df_ref_lan['id'] == id_duplicate]['title'].item()})
+                          'title': resource['title'],
+                          'title_dup': df_ref_lan[df_ref_lan['id'] == id_duplicate]['title'].item(),
+                          'content' : text[0:100], 
+                          'content_dup': df_ref_lan[df_ref_lan['id'] == id_duplicate]['content'].item()[0:100]})
 
   duplicates = pd.DataFrame(duplicates)
-  duplicates = duplicates[['id', 'id_dup', 'title', 'title_dup', 'cos_similarity', 'type']]
+
+  if verbose:
+    print('Computing distance between titles and content (1st 100 characters) ... ')
+  # Computing the distance between the content & title
+  content_distance = []
+  title_distance = []
+  for i in range(duplicates.shape[0]):
+      cd = similar_strings(duplicates.content[i], duplicates.content_dup[i])
+      content_distance.append(cd)
+
+      td = similar_strings(duplicates.title[i], duplicates.title_dup[i])
+      title_distance.append(td)
+
+  duplicates['content_distance'] = content_distance
+  duplicates['title_distance'] = title_distance
+  duplicates['certainty'] = 'NaN'
+
+  duplicates = duplicates[['id', 'id_dup', 'type', 'lan', 'title', 'title_dup', \
+                          'content', 'content_dup', 'cos_similarity',  'content_distance', 'title_distance', 'certainty']]
   fname = save_file_path + 'data/interim/duplicates_latest.csv'
 
   if write:

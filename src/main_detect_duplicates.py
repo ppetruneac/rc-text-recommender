@@ -12,7 +12,7 @@ first_run = True
 
 # Reading data
 print("\nReading the data ... ")
-df_ref, df_latest = make_dataset_duplicates.read_data(host='localhost', user='root', password='password', db='resursenew')
+df_ref, df_latest = make_dataset_duplicates.read_data(host='host', user='root', password='password', db='db')
 print("\tshape df_ref = {}".format(df_ref.shape))
 print("\tshape df_latest = {}".format(df_latest.shape))
 

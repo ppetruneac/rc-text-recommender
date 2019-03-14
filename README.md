@@ -12,13 +12,13 @@
  - Duplicates are identified based on the vocabularily of the same resource type and language. 
 
  
- > **Note**: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. This needs to be uploaded into a database/table (*duplicates.all_duplicates*)
+ > **Note**: [all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. This needs to be uploaded into a database/table (i.e. *duplicates.all_duplicates*)
  
  **Setup**
  - install [Python](www.python.org) and ideally use a virtual environment. 
  - `pip install -r requirements.txt` to install Python package requirements.
  
- **src/functions**: change the *.sql files to accomodate the current database and tables. Do not change the relative file paths. 
+ **src/functions**: Do not change the relative file paths. 
  - `make_dataset_duplicates.py`: function to read reference and latest data (24h). Change SQL query if needed.
  - `load_duplicates_to_MySQL.sql`: change to load into the actual database and table
  

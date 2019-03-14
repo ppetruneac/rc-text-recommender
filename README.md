@@ -6,9 +6,9 @@
  ### Identifying Duplicates
  Similar resources are identified based on [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity). The most similar resource is returned and loaded into MySQL. 
  
- > **Assumption**: 
+ > **Assumptions**: 
  - Raw data read from source (i.e. MySQL) has language as attribute / column. 
- - There is a language dictioanry in both `detect_duplciates.py` and `get-term_frequency.py` file. This is used to load common words in one particular language. 
+ - There is a language dictioanry for all language id in both `detect_duplciates.py` and `get-term_frequency.py` file. This is used to load common words in one particular language. 
  - Duplicates are identified based on the vocabularily of the same resource type and language. 
 
  

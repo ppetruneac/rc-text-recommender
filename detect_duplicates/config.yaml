@@ -1,0 +1,61 @@
+# Config details for the duplicates run
+
+mysql_credentials:
+  host: localhost
+  username: root
+  password: password
+  database: resursenew
+
+# Defining parameters
+first_run: False # boolean. If True it will create data/interim/tf_voc folder; # Set True for first run. Also recommended to be True at least once a month to update the vocabularily.
+verbose: True
+min_obs_lan: 100 # min observations per language to be able to detect duplicates. If < 100 it will regularily suggest the same resource as being duplicate / most simialr. 
+save_file_path: '../' # controls path levels where to save the data
+# The number of hours to consider reading data as being the latest to detect duplicates for (24: for the last 24 hours). 
+# used in utils.read_data_duplicates
+interval: 5500
+resource_type2remove: [15,17,18,20,22,30,31,29,40,48,35,12] # `res_type_id` that are not of type text/string.
+
+# Creating the language dictioanry using the language_id in resources table. 
+# Language 'Romani (tiganeasca)' cannot be found in langdetect. 
+dict_lan: {'1': 'ro',
+            '2': 'en',
+            '3': 'fr',
+            '4': 'it',
+            '5': 'es',
+            '6': 'de',
+            '7': 'hu',
+            '8': 'ru',
+            '9':'unknown1', 
+            '10': 'unknown2',
+            '11': 'unknown3'}
+# Dict for resource type
+dict_res_type_id: {'1': 'Acorduri',
+            '2': 'Cântece',
+            '3': 'Devoționale',
+            '4': 'Editoriale',
+            '5': 'Eseuri',
+            '6': 'Maxime',
+            '7': 'Poezii',
+            '8': 'Schițe',
+            '9': 'Studii',
+            '10': 'Predici',
+            '11': 'Cărți',
+            '12': 'Scenete',
+            '13': 'Powerpoint',
+            '14': 'Reviste',
+            '15': 'Partituri',
+            '16': 'Biblia',
+            '37': 'Jocuri',
+            '39': 'Lecția zilnică',
+            '41': 'Versete',
+            '42': 'Biografii',
+            '43': 'Mărturii',
+            '45': 'Programe creștine',
+            '46': 'Cugetări',
+            '47': 'Dezbateri'}
+
+
+
+
+

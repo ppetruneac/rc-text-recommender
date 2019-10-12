@@ -14,10 +14,10 @@ from stop_words import get_stop_words
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-def read_data_duplicates(host, user, password, db, interval=24):
+def read_data_duplicates(host, user, password, db, resource_type2remove, interval=24):
   
   """
-  Function that reads data from MySQL and returns 2 data frames: one with all data but not the last X (24 hours)
+  Function that reads data from MySQL and returns 2 data frames: one with all data but not the last X (e.g. 24 hours)
   and the 2nd one containing data in the last X (24) hours.
 
   Arguments:
@@ -26,6 +26,7 @@ def read_data_duplicates(host, user, password, db, interval=24):
   user : your username
   passwd : your password
   db : database name to be used
+  resource_type2remove : resource type as it apperas in `res_type_id` and needs not to be included. 
   interval : int; interval in terms of hour e.g. 24h -- it reads data in the last 24h and computes duplicates. 
 
   Output:
@@ -37,45 +38,60 @@ def read_data_duplicates(host, user, password, db, interval=24):
   cursor = connection.cursor()
 
   query_ref = """
-  SELECT
-    resources.id,
-    resources.res_type_id,
-    resources.language_id,
-    resources.title,
-    resources.created_at,
-    text_details.content  
-  FROM
-    resources
-  LEFT JOIN text_details ON resources.id = text_details.resources_id
-  WHERE
-    text_details.content is not null and resources.created_at < (NOW() - INTERVAL """ + str(interval) + " HOUR)"
+    SELECT
+      resources.id,
+      resources.res_type_id,
+      resources.language_id,
+      resources.title,
+      text_details.content  
+    FROM
+      resources
+    LEFT JOIN text_details ON resources.id = text_details.resources_id
+    WHERE
+      text_details.content is not null and resources.created_at < (NOW() - INTERVAL """ + str(interval) + " HOUR) and  resources.res_type_id not in (""" + ', '.join([str(el) for el in resource_type2remove]) + ") "
   
   df_ref = pd.read_sql(query_ref, connection)
 
   query_latest = """
-  SELECT
-    resources.id,
-    resources.res_type_id,
-    resources.language_id,
-    resources.title,
-    resources.created_at,
-    text_details.content  
-  FROM
-    resources
-  LEFT JOIN text_details ON resources.id = text_details.resources_id
-  WHERE
-    text_details.content is not null and resources.created_at > (NOW() - INTERVAL """ + str(interval) + " HOUR)"
+    SELECT
+      resources.id,
+      resources.res_type_id,
+      resources.language_id,
+      resources.title,
+      text_details.content  
+    FROM
+      resources
+    LEFT JOIN text_details ON resources.id = text_details.resources_id
+    WHERE
+      text_details.content is not null and resources.created_at > (NOW() - INTERVAL """ + str(interval) + " HOUR) and  resources.res_type_id not in (""" + ', '.join([str(el) for el in resource_type2remove]) + ") "
 
   df_latest = pd.read_sql(query_latest, connection)
 
+  query_duplicates_validated = """
+    SELECT 
+    res_type_id,
+      language_id, 
+      min(cos_similarity) as cos_similarity_min,
+      max(cos_similarity) as cos_similarity_max,
+      std(cos_similarity) as cos_similarity_std,
+    min(content_distance) as content_distance_min,
+      max(content_distance) as content_distance_max,
+      std(content_distance) as content_distance_std,
+    min(title_distance) as title_distance_min,
+      max(title_distance) as title_distance_max,
+      std(title_distance) as title_distance_std
+    FROM duplicates.duplicates_detected
+    where certainty = 'validated'
+    group by 1,2
+  """
+  df_dup_validated = pd.read_sql(query_duplicates_validated, connection)
+
   connection.close()
 
-  return df_ref, df_latest
+  return df_ref, df_latest, df_dup_validated
 
 
-def clean_data(df, resource_type2remove, 
-                verbose = False, 
-                write = False, 
+def clean_data(df,  verbose = False, write = False, 
                 write_filename = 'dataset_clean',
                 save_file_path = "../../"):
 
@@ -104,11 +120,11 @@ def clean_data(df, resource_type2remove,
   # ## Data Cleaning
 
   if verbose:
-    print("Cleaning the data ... ")
+    print("Cleaning data ... ")
 
   # Strip the missing values. 
   if verbose:
-    print("\tStripping obs with missing values ... ")
+    print("\tStripping data with missing values ... ")
   df = df[(~df['title'].isna()) & (~df['content'].isna()) & (~df['res_type_id'].isna())]
 
   # Lower case the text fields
@@ -116,11 +132,6 @@ def clean_data(df, resource_type2remove,
     print("\tLower case the text data ... ")
   df['title'] = df['title'].str.lower()
   df['content'] = df['content'].str.lower()
-
-  # Remove resources of not type text
-  if verbose:
-    print("\tRemove resource type of not type `text` ... ")
-  df = df.loc[~df['res_type_id'].isin(resource_type2remove)]
   
   # ### Remove Diacritice
   if verbose:
@@ -216,7 +227,7 @@ def clean_data(df, resource_type2remove,
   return df
 
 
-def get_term_frequency_voc(df, dict_lan, verbose = False, save_file_path = "../../", min_obs_lan = 100):
+def get_term_frequency_voc(df, dict_lan, dict_res_type_id, verbose = False, save_file_path = "../../", min_obs_lan = 100):
   
   """
   Function to create the term frequency vocabulary for each type of resource type and language.  
@@ -227,6 +238,7 @@ def get_term_frequency_voc(df, dict_lan, verbose = False, save_file_path = "../.
   ---------
     df : dataframe with columns [id, title, type, content]
     dict_lan : dictionary that maps language integers to string; used in printing
+    dict_res_type_id: dict to map resource type id to names
     verbose : if to print progress
     save_file_path : controls how many levels up to go to the saving directory, data; it is not a full path 
     min_obs_lan : min obs to be considered per Type & Language. Default = 100, preferably to not change. 
@@ -251,21 +263,19 @@ def get_term_frequency_voc(df, dict_lan, verbose = False, save_file_path = "../.
     df_ = df[df['res_type_id'] == type_].reset_index()
 
     if verbose:
-      print('\n\tWorking on type {} out of {} (type {});  shape = {} ... '.format(i+1, len(rc_type), type_, df_.shape))
+      print('\n\t`{}`: {} out of {};  shape = {} ... '.format(dict_res_type_id[str(type_)], i+1, len(rc_type), df_.shape))
       
-    language = df['language_id'].unique()
+    # only languages in the filtered df by type_
+    language = df_['language_id'].unique()
   
     if verbose:
-      print("\tThere are {} languages for type {}. It will only compute those with at least {} observations. ".format(len(language), type_, min_obs_lan))
+      print("\tThere are {} languages for type `{}`. It will only compute those with at least {} observations. ".format(len(language), dict_res_type_id[str(type_)], min_obs_lan))
     
     # For each language
     for j, lan in enumerate(language):
       df_lang = df_[df_['language_id'] == lan]
       
       if (df_lang.shape[0] >= min_obs_lan):        
-        if verbose:
-          print('\t\tWorking on language {} ... '.format(dict_lan[str(lan)]))
-
         # This will be run once to create the tf-idf matrix and similarity df
         documents = df_lang['content']
         # Tries to get stopwords if found; if not will not remove them. 
@@ -278,8 +288,6 @@ def get_term_frequency_voc(df, dict_lan, verbose = False, save_file_path = "../.
         # tf_features = pd.DataFrame(tf_features, index=documents.index)
 
         vocabulary = cv.vocabulary_
-        if verbose:
-          print('\t\t\tWriting vocabulary to disk ...')
       
         # Saving the vocabulary to file
         for v in vocabulary:
@@ -291,7 +299,7 @@ def get_term_frequency_voc(df, dict_lan, verbose = False, save_file_path = "../.
         f.close()
 
         if verbose:
-          print('\t\t\tVocabulary was written to: {}'.format(voc_name))
+          print('\t\t`{}` Vocabulary was written to: {}'.format(dict_lan[str(lan)].upper(), voc_name))
       else:
         if verbose:
           print('\t\tThere are not enough resources to compute voc for language `{}`.'.format(dict_lan[str(lan)]))

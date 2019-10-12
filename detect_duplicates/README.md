@@ -28,7 +28,7 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
 
 **Files:**
 
-- [main_detect_duplicates.py](main_detect_duplicates.py) -- main function to run on terminal. This will save the duplicates data in the data/interim folder in *csv* format. Change the *bashCommand* to be able to execute for your user account. The 
+- [main_detect_duplicates.py](main_detect_duplicates.py) -- main function to run on terminal. This will save the duplicates data in the data/interim folder in *csv* format. Change the *bashCommand* to be able to execute for your user account.  
 - [load_duplicates_to_MySQL.sql](load_duplicates_to_MySQL.sql) can be used to laod the duplicates data into `duplicates.duplicates_detected` table in MySQL. --> **NEEDS TO BE APPENDED / UNION.** Once this is working, can uncomment last lines of code in [main_detect_duplicates.py](./main_detect_duplicates.py#63)
 - the other files are used in the [main_detect_duplicates.py](main_detect_duplicates.py)
  

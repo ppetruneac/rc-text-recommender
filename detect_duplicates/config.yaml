@@ -9,7 +9,7 @@ mysql_credentials:
 # Defining parameters
 first_run: False # boolean. If True it will create data/interim/tf_voc folder; # Set True for first run. Also recommended to be True at least once a month to update the vocabularily.
 verbose: True
-min_obs_lan: 100 # min observations per language to be able to detect duplicates. If < 100 it will regularily suggest the same resource as being duplicate / most simialr. 
+min_obs_lan: 50 # min observations per language to be able to detect duplicates.
 save_file_path: '../' # controls path levels where to save the data
 # The number of hours to consider reading data as being the latest to detect duplicates for (24: for the last 24 hours). 
 # used in utils.read_data_duplicates

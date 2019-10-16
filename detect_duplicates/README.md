@@ -22,8 +22,12 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
 
   
  ## Instructions 
- - install [Python 3](www.python.org) and ideally use a virtual environment. 
- - `pip install -r requirements.txt` to install Python package requirements.
+ - run `bash ../requirements.sh` to install dependancies from fresh in CentOS
+ 
+ Otherwise:
+
+- install [Python 3](www.python.org) and ideally use a virtual environment. 
+- `pip install -r requirements.txt` to install Python package requirements.
 
 
 **Files:**

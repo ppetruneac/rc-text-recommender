@@ -5,7 +5,16 @@ Main function to detect duplicates.
 import pandas as pd
 import utils
 import detect_duplicates
-import os, yaml
+import os, yaml, argparse
+
+# Get MySQL username and password via terminal arguments
+parser = argparse.ArgumentParser(description='Get MySQL user and password.')
+parser.add_argument('-u')
+parser.add_argument('-p')
+
+args = parser.parse_args()
+user = args.u
+password = args.p
 
 
 # Get the config file
@@ -28,8 +37,8 @@ save_file_path = config['save_file_path']
 if verbose:
   print("\nReading data for detecting duplicates ... ")
 df_ref, df_latest, df_dup_validated = utils.read_data_duplicates(host=mysql_credentials['host'], 
-                                              user=mysql_credentials['username'], 
-                                              password=mysql_credentials['password'], 
+                                              user=user, 
+                                              password=password, 
                                               db=mysql_credentials['database'], 
                                               resource_type2remove = resource_type2remove,
                                               interval = interval)
@@ -59,12 +68,3 @@ duplicates = detect_duplicates.detect_duplicates(df_ref, df_latest, df_dup_valid
                               dict_lan = dict_lan, 
                               verbose=verbose, 
                               save_file_path = save_file_path)
-
-# # Load new duplicates to MySQL
-# if verbose:
-#   print('Loading the latest duplicates to MySQL ...')
-# bashCommand = 'mysql --user=' + mysql_credentials['username'] + ' --password=' +  mysql_credentials['password'] + ' < load_duplicates_to_MySQL.sql'
-# os.system(bashCommand)
-
-if verbose:
-  print('DONE! ')

@@ -31,17 +31,17 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
 
 
 **Files:**
-
-- [main_detect_duplicates.py](main_detect_duplicates.py) -- main function to run on terminal. This will save the duplicates data in the data/interim folder in *csv* format. Change the *bashCommand* to be able to execute for your user account.  
-- [load_duplicates_to_MySQL.sql](load_duplicates_to_MySQL.sql) can be used to laod the duplicates data into `duplicates.duplicates_detected` table in MySQL. --> **NEEDS TO BE APPENDED / UNION.** Once this is working, can uncomment last lines of code in [main_detect_duplicates.py](./main_detect_duplicates.py#63)
-- the other files are used in the [main_detect_duplicates.py](main_detect_duplicates.py)
+- [utils.py](utils.py): utility functions
+- [detect_duplicates.py](detect_duplicates.py): core code for detecting duplicates
+- [main_detect_duplicates.py](main_detect_duplicates.py) -- main function to run on terminal. This will save the duplicates data in the data/interim folder in *csv* format. 
+- [main_detect_duplicates.sh](main_detect_duplicates.sh): main file to run on bash. It runs [main_detect_duplicates.py](main_detect_duplicates.py) and then it loads the results into MySQL. 
  
  
  
  **How to run**
  ```
  cd detect_duplicates
- python3 main_detect_duplicates.py 
+ bash main_duplicates.sh -u USER -p PASSWORD
  ```
 
  ## Appendix
@@ -49,8 +49,7 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
  Query 1: load `all_duplicates.csv` data in MySQL:
 
  ```
- create database IF NOT EXISTS duplicates;
-
+ 
 CREATE TABLE IF NOT EXISTS resursenew.duplicates_detected
 (
   id                  INT NOT NULL,  

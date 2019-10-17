@@ -18,7 +18,7 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
  Plese refer to [docs/data_overview.ipynb](docs/data_overview.ipynb) for details on the exact fields in the raw dataset. 
 
   > **Note**: [data/all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. 
-  This file was uploaded in MySQL `duplicates` database with table `duplicates_detected` (see Appendix query 1 for help).
+  This file was uploaded in MySQL `resursenew` database with table `duplicates_detected` (see Appendix query 1 for help).
 
   
  ## Instructions 
@@ -51,7 +51,7 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
  ```
  create database IF NOT EXISTS duplicates;
 
-CREATE TABLE IF NOT EXISTS duplicates.duplicates_detected
+CREATE TABLE IF NOT EXISTS resursenew.duplicates_detected
 (
   id                  INT NOT NULL,  
   id_dup              INT NOT NULL,                 
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS duplicates.duplicates_detected
   certainty           text                       
 );
 
-LOAD DATA LOCAL INFILE '../data/interim/duplicates_latest.csv' 
-INTO TABLE duplicates.duplicates_detected
+LOAD DATA LOCAL INFILE '/root/rc-text-recommender/data/all_duplicates.csv' 
+INTO TABLE resursenew.duplicates_detected
   FIELDS TERMINATED BY ','
   LINES TERMINATED BY '\n'
   IGNORE 1 ROWS;

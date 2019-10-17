@@ -80,7 +80,7 @@ def read_data_duplicates(host, user, password, db, resource_type2remove, interva
     min(title_distance) as title_distance_min,
       max(title_distance) as title_distance_max,
       std(title_distance) as title_distance_std
-    FROM duplicates.duplicates_detected
+    FROM resursenew.duplicates_detected
     where certainty = 'validated'
     group by 1,2
   """

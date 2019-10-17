@@ -12,7 +12,6 @@ done
 # run the detect duplicates
 python main_detect_duplicates.py -u $USER -p $PASSWORD
 
-echo "\n"
 echo 'Loading the latest duplicates to MySQL ...'
 
 # Insert the latest_duplicates.csv file in MySQL
@@ -21,3 +20,5 @@ INTO TABLE resursenew.duplicates_detected
   FIELDS TERMINATED BY ','
   LINES TERMINATED BY '\n'
   IGNORE 1 ROWS;"
+
+echo 'DONE! '

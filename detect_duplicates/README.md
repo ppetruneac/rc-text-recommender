@@ -19,7 +19,7 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
 
  ## Instructions 
  - run `bash requirements.sh` to install dependancies from fresh in CentOS. This installs Python + dependant packages. 
- - run (ONLY for the first time): `initialisation_mysql.sh  -u <USER> -p <PASSWORD>` to create some MySQL tables and load some data in (i.e. `duplicates_validated` in `duplicates_validated` table). 
+ - run (ONLY for the first time): `bash initialisation_mysql.sh  -u <USER> -p <PASSWORD>` to create some MySQL tables and load some data in (i.e. `duplicates_validated` in `duplicates_validated` table). 
  
 
 **Files:**

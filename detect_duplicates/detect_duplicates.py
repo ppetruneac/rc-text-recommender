@@ -24,7 +24,7 @@ def duplicates_post_processing(duplicates, df_dup_validated, verbose=True):
 
   Assumptions
   -----------
-    - duplicates duplicates dataframe.  
+    - duplicates : duplicates dataframe.  
     - df_dup_validated : dataframe with duplicates validated. 
     - verbose : boolean; If True prints the progress; 
   """

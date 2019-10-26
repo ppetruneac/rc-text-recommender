@@ -10,13 +10,14 @@ esac
 done
 
 # run the detect duplicates
+cd /root/rc-text-recommender/detect_duplicates
 python main_detect_duplicates.py -u $USER -p $PASSWORD
 
 echo 'Loading the latest duplicates to MySQL ...'
 
 # Insert the latest_duplicates.csv file in MySQL
 mysql -u $USER -p$PASSWORD  -e "LOAD DATA LOCAL INFILE '/root/rc-text-recommender/data/interim/duplicates_latest.csv' 
-INTO TABLE resursenew.duplicates_detected
+INTO TABLE resursenew.duplicates_to_validate
   FIELDS TERMINATED BY ','
   LINES TERMINATED BY '\n'
   IGNORE 1 ROWS;"

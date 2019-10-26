@@ -17,18 +17,10 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
 
  Plese refer to [docs/data_overview.ipynb](docs/data_overview.ipynb) for details on the exact fields in the raw dataset. 
 
-  > **Note**: [data/all_duplicates.csv](data/all_duplicates.csv) contains duplicates that were previously generated and manually validated. 
-  This file was uploaded in MySQL `resursenew` database with table `duplicates_detected` (see Appendix query 1 for help).
-
-  
  ## Instructions 
- - run `bash ../requirements.sh` to install dependancies from fresh in CentOS
+ - run `bash requirements.sh` to install dependancies from fresh in CentOS. This installs Python + dependant packages. 
+ - run (ONLY for the first time): `initialisation_mysql.sh  -u <USER> -p <PASSWORD>` to create some MySQL tables and load some data in (i.e. `duplicates_validated` in `duplicates_validated` table). 
  
- Otherwise:
-
-- install [Python 3](www.python.org) and ideally use a virtual environment. 
-- `pip install -r requirements.txt` to install Python package requirements.
-
 
 **Files:**
 - [utils.py](utils.py): utility functions
@@ -40,35 +32,6 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
  
  **How to run**
  ```
- cd detect_duplicates
- bash main_duplicates.sh -u USER -p PASSWORD
- ```
-
- ## Appendix
-
- Query 1: load `all_duplicates.csv` data in MySQL:
-
+ bash main_duplicates.sh -u <USER> -p <PASSWORD>
  ```
  
-CREATE TABLE IF NOT EXISTS resursenew.duplicates_detected
-(
-  id                  INT NOT NULL,  
-  id_dup              INT NOT NULL,                 
-  res_type_id         INT NOT NULL,                 
-  language_id         INT NOT NULL,                 
-  title               text,
-  title_dup           text,
-  content             text,
-  content_dup         text,
-  cos_similarity      double,
-  content_distance    double,
-  title_distance      double,
-  certainty           text                       
-);
-
-LOAD DATA LOCAL INFILE '/root/rc-text-recommender/data/all_duplicates.csv' 
-INTO TABLE resursenew.duplicates_detected
-  FIELDS TERMINATED BY ','
-  LINES TERMINATED BY '\n'
-  IGNORE 1 ROWS;
- ```

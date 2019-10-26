@@ -11,7 +11,7 @@ min_obs_lan: 50 # min observations per language to be able to detect duplicates.
 save_file_path: '../' # controls path levels where to save the data
 # The number of hours to consider reading data as being the latest to detect duplicates for (24: for the last 24 hours). 
 # used in utils.read_data_duplicates
-interval: 5660
+interval: 5760
 resource_type2remove: [15,17,18,20,22,30,31,29,40,48,35,12] # `res_type_id` that are not of type text/string.
 
 # Creating the language dictioanry using the language_id in resources table. 

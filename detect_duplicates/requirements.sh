@@ -11,5 +11,5 @@ cd environments
 python3.6 -m venv rc
 source rc/bin/activate
 sudo yum install git -y
-cd rc-text-recommender
+cd rc-text-recommender/detect_duplicates
 pip install -r requirements.txt

@@ -11,7 +11,7 @@ done
 
 # run the detect duplicates
 cd /root/rc-text-recommender/detect_duplicates
-python main_detect_duplicates.py -u $USER -p $PASSWORD
+python3 main_detect_duplicates.py -u $USER -p $PASSWORD
 
 echo 'Loading the latest duplicates to MySQL ...'
 

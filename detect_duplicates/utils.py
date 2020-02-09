@@ -66,6 +66,7 @@ def read_data_duplicates(host, user, password, db, resource_type2remove, interva
       text_details.content is not null and resources.created_at > (NOW() - INTERVAL """ + str(interval) + " HOUR) and  resources.res_type_id not in (""" + ', '.join([str(el) for el in resource_type2remove]) + ") "
 
   df_latest = pd.read_sql(query_latest, connection)
+  df_latest = pd.read_csv("../data/latest.csv")
 
   query_duplicates_validated = """
     SELECT 

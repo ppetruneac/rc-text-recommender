@@ -179,7 +179,7 @@ def detect_duplicates(df_ref, df_latest, df_dup_validated, dict_lan, verbose=Tru
     if 'vocabulary' in locals():
       # Compute term frequencies 
       cv = CountVectorizer(vocabulary=vocabulary)
-      tf_doc = cv.fit_transform(documents).toarray()
+      tf_doc = cv.fit_transform(documents).toarray() # check this to see output example: https://duckduckgo.com/?q=cv.fit_transform(documents).toarray()&atb=v264-7__&iax=images&ia=images&iai=https%3A%2F%2Fmiro.medium.com%2Fmax%2F1294%2F1*O5qw9If1bTsHG2BtZzEJyA.png
       # Scaling the text  
       scaler = MaxAbsScaler()
       normalizer = Normalizer()
@@ -204,8 +204,8 @@ def detect_duplicates(df_ref, df_latest, df_dup_validated, dict_lan, verbose=Tru
                           'content' : text[0:100], 
                           'content_dup': df_ref_lan[df_ref_lan['id'] == id_duplicate]['content'].item()[0:100]})
 
-  duplicates = pd.DataFrame(duplicates)
-  duplicates = duplicates_post_processing(duplicates, df_dup_validated, verbose=verbose)
+  duplicates = pd.DataFrame(duplicates) # needs error handling from here below 
+  duplicates = duplicates_post_processing(duplicates, df_dup_validated, verbose=verbose) 
 
   fname = save_file_path + 'data/interim/duplicates_latest.csv'
   if write:

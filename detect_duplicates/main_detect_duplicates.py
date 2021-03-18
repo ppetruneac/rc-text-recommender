@@ -36,7 +36,7 @@ save_file_path = config['save_file_path']
 # Reading data
 if verbose:
   print("\nReading data for detecting duplicates ... ")
-df_ref, df_latest, df_dup_validated = utils.read_data_duplicates(host=mysql_credentials['host'], 
+df_ref, df_latest, df_dup_validated = utils.read_data(host=mysql_credentials['host'], 
                                               user=user, 
                                               password=password, 
                                               db=mysql_credentials['database'], 
@@ -48,10 +48,8 @@ if verbose:
   print("\tshape df_latest = {}".format(df_latest.shape))
 
 # Cleaning the data
-df_ref = utils.clean_data(df_ref, verbose = verbose,
-                          save_file_path = save_file_path)
-df_latest = utils.clean_data(df_latest,  verbose = verbose, 
-                            save_file_path = save_file_path)
+df_ref = utils.clean_data(df_ref, verbose = verbose, save_file_path = save_file_path)
+df_latest = utils.clean_data(df_latest,  verbose = verbose, save_file_path = save_file_path)
 
 
 # Creating the tf vocabularily and save it to data/interim/tf

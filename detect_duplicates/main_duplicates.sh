@@ -1,4 +1,5 @@
 # Script to run detect duplicates on bash + insert data into MySQL
+# How to run: bash main_duplicates.sh -u <USER> -p <PASSWORD>
 
 while getopts u:d:p:f: option
 do

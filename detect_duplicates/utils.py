@@ -9,16 +9,18 @@ import pandas as pd
 import re, string, time
 import numpy as np
 import json, os, shutil
-from langdetect import detect
+from langdetect import detect # initially used to detect the language, but now comes with the data. 
 from stop_words import get_stop_words
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-def read_data_duplicates(host, user, password, db, resource_type2remove, interval=24):
+def read_data(host, user, password, db, resource_type2remove, interval=24):
   
   """
-  Function that reads data from MySQL and returns 2 data frames: one with all data but not the last X (e.g. 24 hours)
-  and the 2nd one containing data in the last X (24) hours.
+  Function that reads data from MySQL and returns 3 data frames: 
+    - one with all data but not the last X (e.g. 24 hours)
+    - the 2nd one containing data in the last X (24) hours.
+    - the 3rd one is the validated duplicates in the database.
 
   Arguments:
   ----------

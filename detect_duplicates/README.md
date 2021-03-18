@@ -51,6 +51,21 @@ The above {parameters} can be defined in [config.yaml](./config.yaml).
     - certainty → `likely`: daca cel putin doi dintre cei 3 indici au valoare > decat valoarea maxima a indicelui in  `duplicates_validated` - (minus) standard deviation. 
     - certainty → `unlikely`: daca cel putin doi dintre cei 3 indici au valoare > decat valoarea minima a indicelui in  `duplicates_validated` - (minus) standard deviation. 
 
-Here is an image with the final schema: 
+Here is a table with the final schema: 
 
-![Alt text](duplicates_final_schema.png)
+| Field       | Type     | 
+| :------------- | :----------: | 
+|  id | int(11)   | 
+|  id_dup | int(11)   | 
+|  res_type_id | int(11)   | 
+|  language_id | int(11)   | 
+|  title | text   | 
+|  title_dup | text   | 
+|  content | text   | 
+|  content_dup | text   | 
+|  cos_similarity | double   | 
+|  content_distance | double   | 
+|  title_distance | double   | 
+|  certainty | text   | 
+
+
